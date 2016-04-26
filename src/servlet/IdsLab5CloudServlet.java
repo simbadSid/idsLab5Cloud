@@ -282,6 +282,7 @@ System.out.println("+++++ Method: " + methodName);
 				if (isFirst)
 				{
 					url += GET_PARAMETER_SEPARATOR + parameterName + GET_PARAMETER_VALUE_SEPARATOR + parameterValue;
+					isFirst = false;
 				}
 				else
 				{

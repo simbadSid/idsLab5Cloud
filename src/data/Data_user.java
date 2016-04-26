@@ -32,8 +32,8 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Attributes
 // -------------------------------
-	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "ip", "interests"};
-	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
+	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "IP", "interests"};
+	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "IP", "interests", "freind"};
 
 	@Id
 	@PrimaryKey

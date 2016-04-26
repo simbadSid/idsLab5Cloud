@@ -32,8 +32,8 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Attributes
 // -------------------------------
-	private static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "ip", "interests"};
-	private static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
+	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "ip", "interests"};
+	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
 
 	@Id
 	@PrimaryKey
@@ -47,7 +47,7 @@ public class Data_user implements DataInterface
 	private String				surname		= "";
 	private	Long				age			= (long) -1;
 	private String				location	= "";
-	private String				ip			= "";
+	private String				IP			= "";
 	private ArrayList<String>	interests	= new ArrayList<String>();;
 	private ArrayList<String>	freind		= new ArrayList<String>();;
 
@@ -67,7 +67,7 @@ public class Data_user implements DataInterface
 		this.surname	= new String(surname);
 		this.age		= new Long(age);
 		this.location	= new String(location);
-		this.ip			= null;
+		this.IP			= null;
 		this.freind		= new ArrayList<String>();
 		this.interests	= new ArrayList<String>();
 		for (String str:interests)
@@ -108,16 +108,17 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Getter
 // -------------------------------
-	public String				getKey		(){return new String(this.login);}
-	public String				getPassword		(){return new String(this.password);}
-	public String				getName			(){return new String(this.name);}
-	public String				getSurname		(){return new String(this.surname);}
-	public Long					getAge			(){return this.age;}
-	public String				getLocation		(){return new String(this.location);}
-	public String				getIP			(){return (this.ip == null)? null : new String(this.location);}
-	public LinkedList<String>	getInterests	(){return new LinkedList<String>(this.interests);}
-	public LinkedList<String>	getFreind		(){return new LinkedList<String>(this.freind);}
-	public String				getPictureName	()
+	public String				getKey			(){return new String(this.login);}
+	public String				get_login		(){return new String(this.login);}
+	public String				get_password	(){return new String(this.password);}
+	public String				get_name		(){return new String(this.name);}
+	public String				get_surname		(){return new String(this.surname);}
+	public Long					get_age			(){return this.age;}
+	public String				get_location	(){return new String(this.location);}
+	public String				get_IP			(){return (this.IP == null)? null : new String(this.location);}
+	public LinkedList<String>	get_interests	(){return new LinkedList<String>(this.interests);}
+	public LinkedList<String>	get_freind		(){return new LinkedList<String>(this.freind);}
+	public String				get_pictureName	()
 	{
 //TODO change by a check in the picture directory
 		return StaticResourceManager.defaultPicture;
@@ -154,7 +155,7 @@ public class Data_user implements DataInterface
 // -------------------------------
 	public void setIp(String ip)
 	{
-		this.ip = (ip == null) ? null : new String(ip);
+		this.IP = (ip == null) ? null : new String(ip);
 	}
 
 	public void addFreind(String freindLogin)
@@ -199,134 +200,5 @@ public class Data_user implements DataInterface
 			e.printStackTrace();
 			System.exit(0);
 		}
-	}
-
-	public String getUserFile(ResourceManager userSet, boolean isForeignPage, String freindLoginError)
-	{
-		String res = "";
-
-		res += "<!DOCTYPE html>";
-		res += "<html lang=\"en\">";
-		res += "<head>";
-		res += "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">";
-		res += "		<meta charset=\"utf-8\">";
-		res += "		<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">";
-		res += "		<title>Social Network: user page</title>";
-		res += "			<link rel=\"stylesheet\" type=\"text/css\" href=\"login_fichiers/login.html\">";
-		res += "</head>";
-		res += "<body>";
-		res += "	<section class=\"container\">";
-		res += "		<div align=\"center\">";
-		res += "		<h1>Social network: " + this.login + "'s page (" + ((!isForeignPage)? "loged user" : "Freind") + ")</h1>";
-		res += "	</section>";
-		res += "	<section class=\"container\">";
-		res += "		<div align=\"left\">";
-		res += "		<table class=\"lamp\">";
-		res += "			<tr>";
-		res += "				<th>";
-		res += "					<img src=\"" + this.getPictureName()+ "\" alt=\"Note\" style=\"height:100px;width:100px\">";
-		res += "				</th>";
-		res += "			</tr>";
-		res += "			<tr>";
-		res += "				<td>";
-		if (!isForeignPage)
-		{
-			res += "					<a href=\"logout?login=" + this.getKey() + "\">Logout (" + this.getKey() + ")</a>";
-		}
-		res += "				</td>";
-		res += "			</tr>";
-		res += "		</table>";
-		res += "	</section>";
-		res += "<p></p>";
-		res += "	<section class=\"container\">";
-		res += "		<div align=\"left\">";
-		res += "		<table class=\"lamp\">";
-
-		for (String fieldName: attributesToPrint)
-		{
-			Field field = null;
-			try
-			{
-				field = Data_user.class.getDeclaredField(fieldName);
-			}
-			catch (Exception e1)
-			{
-				e1.printStackTrace();
-				continue;
-			}
-			String attributeName	= field.getName();
-			String attributeValue	= null;
-			try
-			{
-				attributeValue = field.get(this).toString();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-			res += "			<tr>";
-			res += "				<th>";
-			res += "					" + attributeName;
-			res += "				</th>";
-			res += "				<td>";
-			if (isForeignPage)
-			{
-				res += "					" + attributeValue + "\n";
-			}
-			else
-			{
-				res += "					<a href=\"#### URL to change the label ####\"> " + attributeValue + "</a>";	
-			}
-			res += "				</td>";
-			res += "			</tr>";
-		}
-		res += "		</table>";
-		res += "	</section>";
-
-		res += "	<section class=\"container\">";
-		res += "		<div align=\"right\">";
-		if (!isForeignPage)
-		{
-			res += "			<h1>Find New Freinds</h1>";
-			res += "			<form method=\"post\" action=\"addFreind?login=" + this.getKey() + "\">";
-			res += "					<input name=\"freindToAddLogin\" placeholder=\"Type a login\">";
-			res += "					<input name=\"submit\" value=\"Search\" type=\"submit\">";
-			res += "			</form>";
-			res += "			<p></p>";
-			res += "		<table class=\"lamp\">";
-		}
-
-		if (freindLoginError != null)
-		{
-			res += "	<section class=\"container\">";
-			res += "		<div align=\"right\">";
-			res += "			<h1>Can't find the freind \"" + freindLoginError + "\"</h1>";
-			res += "			<p></p>";
-			res += "	</section>";
-		}
-		if (!this.freind.isEmpty())
-		{
-			res += "			<h1>" + this.getKey()+ "'s Freinds:</h1>";
-		}
-
-		for (String freindLogin: this.freind)
-		{
-			Data_user freindUser= userSet.getUser(freindLogin);
-			res += "				<tr>";
-			res += "					<th>";
-			res += "						<img src=\"" + freindUser.getPictureName()+ "\" alt=\"Note\" style=\"height:100px;width:100px\">";
-			res += "					</th>";
-			res += "					<td>";
-			res += "					<a href=\"getFreindPage?freindToreach=" + freindLogin + "\"> " + freindLogin + "</a>";
-			res += "					</td>";
-			res += "				</tr>";
-		}
-		res += "		</div>";
-		res += "	</section>";
-		res += "</body>";
-		res += "</html>";
-
-		return res;
 	}
 }

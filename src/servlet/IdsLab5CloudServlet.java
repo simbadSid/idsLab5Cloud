@@ -3,9 +3,11 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
+
 
 import data.ResourceManager_DataStoreService;
 import data.Data_user;
@@ -29,6 +31,7 @@ public class IdsLab5CloudServlet extends HttpServlet
 	public static final String	FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML	= "login_successfulLogout.jsp";
 	public static final String	FILE_CREATE_ACCOUNT_HTML			= "createAccount.jsp";
 	public static final String	FILE_CREATE_ACCOUNT_FAIL_HTML		= "createAccount_fail.jsp";
+	public static final String	FILE_USER_PAGE_HTML					= "userPage.jsp";
 
 	public static final String	ATTRIBUTE_NAME_LOGIN				= "login";
 	public static final String	ATTRIBUTE_NAME_PASSWORD				= "password";
@@ -40,9 +43,12 @@ public class IdsLab5CloudServlet extends HttpServlet
 	public static final String	ATTRIBUTE_NAME_INTEREST				= "interest";
 	public static final String	ATTRIBUTE_NAME_FREIND_TO_ADD_LOGIN	= "freindToAddLogin";
 	public static final String	ATTRIBUTE_NAME_FREIND_TO_REACH		= "freindToreach";
+	public static final String	ATTRIBUTE_NAME_IS_FOREIGN_USER		= "isForeignUser";
+	public static final String	ATTRIBUTE_NAME_FREIND_LOGIN_ERROR	= "freindLoginError";
 
 	public static final String	ATTRIBUTE_SEPARATOR_INTEREST		= ",";
 	public static final String	GET_PARAMETER_SEPARATOR				= "?";
+	public static final String	GET_PARAMETER_VALUE_SEPARATOR		= "=";
 	public static final String	FILE_SEPARATOR_INTEREST				= "/";
 	public static final String	RESOURCE_DIR_STATIC					= "resourceStatic/";
 	public static final String	RESOURCE_DIR_DYNAMIC				= "resourceDynamic/";
@@ -108,23 +114,20 @@ System.out.println("+++++ Method: " + methodName);
 			}
 			userSet.setUserIP(login, req.getRemoteHost());
 			Data_user user = userSet.getUser(login);
-			if (!password.equals(user.getPassword()))
+			if (!password.equals(user.get_password()))
 			{
 				throw new Exception();
 			}
 
-			// Send the specific page of the user
-			String answer = user.getUserFile(userSet, false, null);
-			resp.setContentType("text/html");
-			resp.setContentLength(answer.length());
-			requestWritter.println(answer);
+			// Redirect to the specific page of the user
+			redirectToUserPage(req, resp, user.getKey(), false, null);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			System.out.println("Login    = " + login);
 			System.out.println("Password = " + password);
-			this.redirectToFile(req, resp, FILE_LOGIN_FAIL_HTML);
+			this.redirectToFile(req, resp, FILE_LOGIN_FAIL_HTML, null);
 		}
 	}
 
@@ -162,11 +165,8 @@ System.out.println("+++++ Method: " + methodName);
 			}
 			user.setIp(req.getRemoteHost());
 			userSet.addUser(user);
-			// Send the specific page of the user
-			String answer = user.getUserFile(userSet, false, null);
-			resp.setContentType("text/html");
-			resp.setContentLength(answer.length());
-			requestWritter.println(answer);
+			// Redirect to the specific page of the user
+			redirectToUserPage(req, resp, user.getKey(), false, null);
 		}
 		catch (Exception e)
 		{
@@ -176,14 +176,14 @@ System.out.println("+++++ Method: " + methodName);
 			System.out.println("Password Confirm = " + passwordConfirmation);
 			System.out.println("Name             = " + name);
 			System.out.println("Surname          = " + surname);
-			this.redirectToFile(req, resp, FILE_CREATE_ACCOUNT_FAIL_HTML);
+			this.redirectToFile(req, resp, FILE_CREATE_ACCOUNT_FAIL_HTML, null);
 		}
 	}
 	public void logout(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
 	{
 		String login = req.getParameter(ATTRIBUTE_NAME_LOGIN);
 		userSet.setUserIP(login, null);
-		this.redirectToFile(req, resp, FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML);
+		this.redirectToFile(req, resp, FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML, null);
 	}
 
 	public void addFreind(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
@@ -203,21 +203,16 @@ System.out.println("+++++ Method: " + methodName);
 			userSet.addUserFreind(currentLogin, freindLogin);
 			userSet.addUserFreind(freindLogin, currentLogin);
 			currentUser		= userSet.getUser(currentLogin);
-			// Send the specific page of the user
-			String answer = currentUser.getUserFile(userSet, false, null);
-			resp.setContentType("text/html");
-			resp.setContentLength(answer.length());
-			requestWritter.println(answer);
+			// Redirect to the specific page of the user
+			redirectToUserPage(req, resp, currentUser.getKey(), false, null);
 		}
 		catch(Exception e)
 		{
 			currentUser = userSet.getUser(currentLogin);
 			if ((currentUser != null) && (freindLogin != null))
 			{
-				String answer = currentUser.getUserFile(userSet, false, freindLogin);
-				resp.setContentType("text/html");
-				resp.setContentLength(answer.length());
-				requestWritter.println(answer);
+				// Redirect to the specific page of the user
+				redirectToUserPage(req, resp, currentUser.getKey(), false, freindLogin);
 			}
 			else
 			{
@@ -239,11 +234,8 @@ System.out.println("+++++ Method: " + methodName);
 			{
 				throw new Exception();
 			}
-			// Send the specific page of the user
-			String answer = freindUser.getUserFile(userSet, true, null);
-			resp.setContentType("text/html");
-			resp.setContentLength(answer.length());
-			requestWritter.println(answer);
+			// Redirect to the specific page of the user
+			redirectToUserPage(req, resp, freindUser.getKey(), true, null);
 		}
 		catch(Exception e)
 		{
@@ -274,15 +266,38 @@ System.out.println("+++++ Method: " + methodName);
 
 	/**
 	 * Send to the user an HTTP code 301: redirect to the given url
-	 * @param req
-	 * @param resp
-	 * @param fileName
-	 * @throws IOException
 	 */
-	private void redirectToFile(HttpServletRequest req, HttpServletResponse resp, String fileName) throws IOException
+	private void redirectToFile(HttpServletRequest req, HttpServletResponse resp, String fileName, HashMap<String, String> parameter) throws IOException
 	{
 		String	host	= req.getServerName();
 		int		port	= req.getServerPort();
-		resp.sendRedirect("http://" + host + ":" + port + "/" + fileName);
+		String	url		= "http://" + host + ":" + port + "/" + fileName;
+
+		if (parameter != null)
+		{
+			boolean isFirst = true;
+			for (String parameterName: parameter.keySet())
+			{
+				String parameterValue = parameter.get(parameterName);
+				if (isFirst)
+				{
+					url += GET_PARAMETER_SEPARATOR + parameterName + GET_PARAMETER_VALUE_SEPARATOR + parameterValue;
+				}
+				else
+				{
+					url += ATTRIBUTE_SEPARATOR_INTEREST + parameterName + GET_PARAMETER_VALUE_SEPARATOR + parameterValue;
+				}
+			}
+		}
+		resp.sendRedirect(url);
+	}
+
+	private void redirectToUserPage(HttpServletRequest req, HttpServletResponse resp, String login, boolean isForeignUser, String freindLoginError) throws IOException
+	{
+		HashMap<String, String> parameter = new HashMap<String, String>();
+		parameter.put(ATTRIBUTE_NAME_LOGIN, login);
+		parameter.put(ATTRIBUTE_NAME_IS_FOREIGN_USER, ""+isForeignUser);
+		parameter.put(ATTRIBUTE_NAME_FREIND_LOGIN_ERROR, freindLoginError);
+		this.redirectToFile(req, resp, FILE_USER_PAGE_HTML, parameter);
 	}
 }

@@ -1,12 +1,10 @@
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="data.*" %>
+<%@ page import="servlet.IdsLab5CloudServlet" %>
 
 
 
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -16,6 +14,14 @@
 
 
 	<body>
+		<section class="container">
+			<div align="center">
+			<h2>Incoherent informations, or account already exists</h2>
+			</div>
+		</section>
+
+		<p></p>
+
 		<section class="container">
 			<div align="center">
 			<h1>Social network: Account creation</h1>
@@ -49,7 +55,6 @@
 					<input name="age" type="number" placeholder="Age" /><br/>
 
 					<p></p>
-
 <!--- ----------------------------------------------------------------------------------- -->
 					<label>Location</label>
 					<p></p>
@@ -65,11 +70,8 @@
 					{%>
 						<input type="radio" name="interest" value="<%=interest.getKey()%>" checked> <%=interest.getKey()%> <br>
 					<% } %>
-
 <!--- ----------------------------------------------------------------------------------- -->
-					<p></p>
 
-					<input type="submit"	name="create"	value="Create"/>
 
 					<p></p>
 
@@ -77,19 +79,6 @@
 
 			</form>
 			</div>
-
-		</section>
-
-
-		<section class="container">
-			<div align="center">
-			<h2>Incoherent informations, or account already exists</h2>
-			</div>
-		</section>
-	
-	</body>
-</html>
-
-
+		</section>	
 	</body>
 </html>

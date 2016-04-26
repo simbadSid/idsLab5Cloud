@@ -1,7 +1,5 @@
 package servlet;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
@@ -11,7 +9,6 @@ import javax.servlet.http.*;
 
 import data.ResourceManager_DataStoreService;
 import data.Data_user;
-import data.StaticResourceManager;
 
 
 
@@ -25,18 +22,13 @@ public class IdsLab5CloudServlet extends HttpServlet
 // ---------------------------------------------
 // Attributes
 // ---------------------------------------------
-	public static final String	FILE_DIRECTORY						= "resourceDynamic/";
+	public static final String	FILE_DIRECTORY_STATIC				= "resourceStatic/";
 
-/***********************
-	public static final String	FILE_LOGIN_HTML						= "resourceStatic/login.html";
-	public static final String	FILE_LOGIN_FAIL_HTML				= "resourceStatic/login_fail.html";
-	public static final String	FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML	= "resourceStatic/login_successfulLogout.html";
-	public static final String	FILE_CREATE_ACCOUNT_HTML			= "resourceStatic/createAccount.html";
-	public static final String	FILE_CREATE_ACCOUNT_FAIL_HTML		= "resourceStatic/createAccount_fail.html";
-************************/
-	private static final String	FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML	= "login_successfulLogout.jsp";
-	private static final String	FILE_CREATE_ACCOUNT_HTML			= "createAccount.jsp";
-	private static final String	FILE_CREATE_ACCOUNT_FAIL_HTML		= "createAccount_fail.jsp";
+	public static final String	FILE_LOGIN_HTML						= "login.jsp";
+	public static final String	FILE_LOGIN_FAIL_HTML				= "login_fail.jsp";
+	public static final String	FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML	= "login_successfulLogout.jsp";
+	public static final String	FILE_CREATE_ACCOUNT_HTML			= "createAccount.jsp";
+	public static final String	FILE_CREATE_ACCOUNT_FAIL_HTML		= "createAccount_fail.jsp";
 
 	public static final String	ATTRIBUTE_NAME_LOGIN				= "login";
 	public static final String	ATTRIBUTE_NAME_PASSWORD				= "password";
@@ -64,16 +56,7 @@ public class IdsLab5CloudServlet extends HttpServlet
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		String resource = parseMethodName(req);
-
-		if (StaticResourceManager.isKnownResource(resource))
-		{
-			sendFile(resp, resp.getWriter(), resource);
-		}
-		else
-		{
-			this.entryMethod(req, resp);
-		}
+		this.entryMethod(req, resp);
 	}
 
 	@Override
@@ -141,14 +124,8 @@ System.out.println("+++++ Method: " + methodName);
 			e.printStackTrace();
 			System.out.println("Login    = " + login);
 			System.out.println("Password = " + password);
-resp.sendRedirect("http://http://localhost:8888/resourceDynamic/login_fail.jsp");
-//			sendFile(resp, requestWritter, FILE_DIRECTORY + FILE_LOGIN_FAIL_HTML);
+			this.redirectToFile(req, resp, FILE_LOGIN_FAIL_HTML);
 		}
-	}
-
-	public void createAccount(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
-	{
-		sendFile(resp, requestWritter, FILE_DIRECTORY + FILE_CREATE_ACCOUNT_HTML);
 	}
 
 	public void createAccountSubmit(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
@@ -199,14 +176,14 @@ resp.sendRedirect("http://http://localhost:8888/resourceDynamic/login_fail.jsp")
 			System.out.println("Password Confirm = " + passwordConfirmation);
 			System.out.println("Name             = " + name);
 			System.out.println("Surname          = " + surname);
-			sendFile(resp, requestWritter, FILE_DIRECTORY + FILE_CREATE_ACCOUNT_FAIL_HTML);
+			this.redirectToFile(req, resp, FILE_CREATE_ACCOUNT_FAIL_HTML);
 		}
 	}
 	public void logout(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
 	{
 		String login = req.getParameter(ATTRIBUTE_NAME_LOGIN);
 		userSet.setUserIP(login, null);
-		sendFile(resp, requestWritter, FILE_DIRECTORY + FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML);
+		this.redirectToFile(req, resp, FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML);
 	}
 
 	public void addFreind(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
@@ -286,12 +263,6 @@ resp.sendRedirect("http://http://localhost:8888/resourceDynamic/login_fail.jsp")
 			res = res.substring(1, res.length());
 		}
 
-		if ((res.startsWith(RESOURCE_DIR_STATIC)) || (res.startsWith(RESOURCE_DIR_DYNAMIC)))
-		{
-			String[] resTab = res.split(FILE_SEPARATOR_INTEREST	);
-			res = resTab[1];
-		}
-
 		if (res.contains(GET_PARAMETER_SEPARATOR))
 		{
 			String[] resTab = res.split(GET_PARAMETER_SEPARATOR);
@@ -301,32 +272,17 @@ resp.sendRedirect("http://http://localhost:8888/resourceDynamic/login_fail.jsp")
 		return res;
 	}
 
-	private static void sendFile(HttpServletResponse resp, PrintWriter requestWritter, String fileName)
+	/**
+	 * Send to the user an HTTP code 301: redirect to the given url
+	 * @param req
+	 * @param resp
+	 * @param fileName
+	 * @throws IOException
+	 */
+	private void redirectToFile(HttpServletRequest req, HttpServletResponse resp, String fileName) throws IOException
 	{
-/*		String fileType = StaticResourceManager.MIME_type(fileName);
-
-		if (fileType != null)
-		{
-			resp.setContentType(fileType);
-		}
-*/
-		BufferedReader br = null;
-		try
-		{
-			br = new BufferedReader(new FileReader(fileName));
-			String line = br.readLine();
-
-			while (line != null)
-			{
-				requestWritter.println(line);
-				line = br.readLine();
-			}
-			br.close();
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			requestWritter.println(e);
-		}
+		String	host	= req.getServerName();
+		int		port	= req.getServerPort();
+		resp.sendRedirect("http://" + host + ":" + port + "/" + fileName);
 	}
 }

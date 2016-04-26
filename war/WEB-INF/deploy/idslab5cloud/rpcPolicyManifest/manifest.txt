@@ -1,0 +1,2 @@
+# Module idslab5cloud
+# RPC service class, partial path of RPC policy file

@@ -32,8 +32,8 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Attributes
 // -------------------------------
-	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "IP", "interests"};
-	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "IP", "interests", "freind"};
+	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "ip", "interests"};
+	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
 
 	@Id
 	@PrimaryKey
@@ -47,7 +47,7 @@ public class Data_user implements DataInterface
 	private String				surname		= "";
 	private	Long				age			= (long) -1;
 	private String				location	= "";
-	private String				IP			= "";
+	private String				ip			= "";
 	private ArrayList<String>	interests	= new ArrayList<String>();;
 	private ArrayList<String>	freind		= new ArrayList<String>();;
 
@@ -67,7 +67,7 @@ public class Data_user implements DataInterface
 		this.surname	= new String(surname);
 		this.age		= new Long(age);
 		this.location	= new String(location);
-		this.IP			= null;
+		this.ip			= null;
 		this.freind		= new ArrayList<String>();
 		this.interests	= new ArrayList<String>();
 		for (String str:interests)
@@ -115,7 +115,7 @@ public class Data_user implements DataInterface
 	public String				get_surname		(){return new String(this.surname);}
 	public Long					get_age			(){return this.age;}
 	public String				get_location	(){return new String(this.location);}
-	public String				get_IP			(){return (this.IP == null)? null : new String(this.location);}
+	public String				get_ip			(){return (this.ip == null)? null : new String(this.location);}
 	public LinkedList<String>	get_interests	(){return new LinkedList<String>(this.interests);}
 	public LinkedList<String>	get_freind		(){return new LinkedList<String>(this.freind);}
 	public String				get_pictureName	()
@@ -153,9 +153,9 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Setter
 // -------------------------------
-	public void setIp(String ip)
+	public void set_ip(String ip)
 	{
-		this.IP = (ip == null) ? null : new String(ip);
+		this.ip = (ip == null) ? null : new String(ip);
 	}
 
 	public void addFreind(String freindLogin)

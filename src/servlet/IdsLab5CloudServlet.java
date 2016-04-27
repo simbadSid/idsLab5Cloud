@@ -47,8 +47,9 @@ public class IdsLab5CloudServlet extends HttpServlet
 	public static final String	ATTRIBUTE_NAME_FREIND_LOGIN_ERROR	= "freindLoginError";
 
 	public static final String	ATTRIBUTE_SEPARATOR_INTEREST		= ",";
-	public static final String	GET_PARAMETER_SEPARATOR				= "?";
-	public static final String	GET_PARAMETER_VALUE_SEPARATOR		= "=";
+	public static final String	URL_FILE_PARAMETER_SEPARATOR		= "?";
+	public static final String	URL_PARAMETER_VALUE_SEPARATOR		= "=";
+	public static final String	URL_PARAMETER_SEPARATOR				= "&";
 	public static final String	FILE_SEPARATOR_INTEREST				= "/";
 	public static final String	RESOURCE_DIR_STATIC					= "resourceStatic/";
 	public static final String	RESOURCE_DIR_DYNAMIC				= "resourceDynamic/";
@@ -163,7 +164,7 @@ System.out.println("+++++ Method: " + methodName);
 			{
 				throw new Exception();
 			}
-			user.setIp(req.getRemoteHost());
+			user.set_ip(req.getRemoteHost());
 			userSet.addUser(user);
 			// Redirect to the specific page of the user
 			redirectToUserPage(req, resp, user.getKey(), false, null);
@@ -182,6 +183,7 @@ System.out.println("+++++ Method: " + methodName);
 	public void logout(HttpServletRequest req, HttpServletResponse resp, PrintWriter requestWritter) throws IOException
 	{
 		String login = req.getParameter(ATTRIBUTE_NAME_LOGIN);
+
 		userSet.setUserIP(login, null);
 		this.redirectToFile(req, resp, FILE_LOGIN_SUCCESSFULL_LOGOUT_HTML, null);
 	}
@@ -255,9 +257,9 @@ System.out.println("+++++ Method: " + methodName);
 			res = res.substring(1, res.length());
 		}
 
-		if (res.contains(GET_PARAMETER_SEPARATOR))
+		if (res.contains(URL_FILE_PARAMETER_SEPARATOR))
 		{
-			String[] resTab = res.split(GET_PARAMETER_SEPARATOR);
+			String[] resTab = res.split(URL_FILE_PARAMETER_SEPARATOR);
 			res = resTab[0];
 		}
 
@@ -281,12 +283,12 @@ System.out.println("+++++ Method: " + methodName);
 				String parameterValue = parameter.get(parameterName);
 				if (isFirst)
 				{
-					url += GET_PARAMETER_SEPARATOR + parameterName + GET_PARAMETER_VALUE_SEPARATOR + parameterValue;
+					url += URL_FILE_PARAMETER_SEPARATOR + parameterName + URL_PARAMETER_VALUE_SEPARATOR + parameterValue;
 					isFirst = false;
 				}
 				else
 				{
-					url += ATTRIBUTE_SEPARATOR_INTEREST + parameterName + GET_PARAMETER_VALUE_SEPARATOR + parameterValue;
+					url += URL_PARAMETER_SEPARATOR + parameterName + URL_PARAMETER_VALUE_SEPARATOR + parameterValue;
 				}
 			}
 		}

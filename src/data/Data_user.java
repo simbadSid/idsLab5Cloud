@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.jdo.annotations.PrimaryKey;
 import javax.persistence.Entity;
@@ -32,8 +33,10 @@ public class Data_user implements DataInterface
 // -------------------------------
 // Attributes
 // -------------------------------
-	public static final String[] attributesToPrint = {"login", "name", "surname", "age", "location", "ip", "interests"};
-	public static final String[] attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
+	public static final String[]	attributesToPrint	= {"login", "name", "surname", "age", "location", "ip", "interests"};
+	public static final String[]	attributesToStore	= {"login", "password", "name", "surname", "age", "location", "ip", "interests", "freind"};
+	public static final String		defaultPassword		= "pass";
+	public static final int			nbrCharRandom		= 4;
 
 	@Id
 	@PrimaryKey
@@ -48,8 +51,8 @@ public class Data_user implements DataInterface
 	private	Long				age			= (long) -1;
 	private String				location	= "";
 	private String				ip			= "";
-	private ArrayList<String>	interests	= new ArrayList<String>();;
-	private ArrayList<String>	freind		= new ArrayList<String>();;
+	private ArrayList<String>	interests	= new ArrayList<String>();
+	private ArrayList<String>	freind		= new ArrayList<String>();
 
 // -------------------------------
 // Builder
@@ -59,7 +62,7 @@ public class Data_user implements DataInterface
 		
 	}
 
-	public Data_user(String login, String password, String name, String surname, int age, String location, String[] interests)
+	public Data_user(String login, String password, String name, String surname, int age, String location, String ip, String[] interests)
 	{
 		this.login		= new String(login);
 		this.password	= new String(password);
@@ -67,7 +70,7 @@ public class Data_user implements DataInterface
 		this.surname	= new String(surname);
 		this.age		= new Long(age);
 		this.location	= new String(location);
-		this.ip			= null;
+		this.ip			= new String(ip);
 		this.freind		= new ArrayList<String>();
 		this.interests	= new ArrayList<String>();
 		for (String str:interests)
@@ -115,7 +118,7 @@ public class Data_user implements DataInterface
 	public String				get_surname		(){return new String(this.surname);}
 	public Long					get_age			(){return this.age;}
 	public String				get_location	(){return new String(this.location);}
-	public String				get_ip			(){return (this.ip == null)? null : new String(this.location);}
+	public String				get_ip			(){return new String(this.ip);}
 	public LinkedList<String>	get_interests	(){return new LinkedList<String>(this.interests);}
 	public LinkedList<String>	get_freind		(){return new LinkedList<String>(this.freind);}
 	public String				get_pictureName	()
@@ -150,14 +153,31 @@ public class Data_user implements DataInterface
 		return this.freind.contains(freindLogin);
 	}
 
+	public ArrayList<String> getCommonInterest(Data_user user)
+	{
+		ArrayList<String> res = new ArrayList<String>();
+
+		for (String interest: this.interests)
+		{
+			if (user.interests.contains(interest))
+			{
+				res.add(interest);
+			}
+		}
+		if (res.isEmpty())
+		{
+			return null;
+		}
+		return res;
+	}
+
 // -------------------------------
 // Setter
 // -------------------------------
-	public void set_ip(String ip)
+	public void setIP(String ip)
 	{
-		this.ip = (ip == null) ? null : new String(ip);
+		this.ip = new String(ip);
 	}
-
 	public void addFreind(String freindLogin)
 	{
 		if (this.freind.contains(freindLogin))
@@ -200,5 +220,32 @@ public class Data_user implements DataInterface
 			e.printStackTrace();
 			System.exit(0);
 		}
+	}
+
+	public static LinkedList<Data_user> getRandomUserList(int nbrRandomUser)
+	{
+		LinkedList<Data_user> res = new LinkedList<Data_user>();
+		Random rnd = new Random();
+
+		for (int i=0; i<nbrRandomUser; i++)
+		{
+			Data_user user = new Data_user();
+			user.login		= StaticResourceManager.generateRandomWord(nbrCharRandom);
+			user.password	= defaultPassword;
+			user.name		= StaticResourceManager.generateRandomWord(nbrCharRandom);
+			user.surname	= StaticResourceManager.generateRandomWord(nbrCharRandom);
+			user.age		= (long) rnd.nextInt(100);
+			user.ip			= "127.0.0.1";
+			user.location	= ResourceManager.initialAvailableCity[rnd.nextInt(ResourceManager.initialAvailableCity.length)];
+			user.interests	= new ArrayList<String>();
+			user.interests.add(ResourceManager.initialAvailableInterest[rnd.nextInt(ResourceManager.initialAvailableInterest.length)]);
+			res.add(user);
+		}
+		return res;
+	}
+
+	public String toString()
+	{
+		return new String(this.login);
 	}
 }

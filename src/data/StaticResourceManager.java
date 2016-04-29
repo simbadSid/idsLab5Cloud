@@ -1,6 +1,8 @@
 package data;
 
 import java.io.File;
+import java.util.Random;
+
 
 
 
@@ -41,5 +43,18 @@ public class StaticResourceManager
 		if (fileName.endsWith(".jsp"))	return "magnus-internal/jsp";
 		if (fileName.endsWith(".html"))	return "text/html";
 		return null;
+	}
+
+	public static String generateRandomWord(int nbrChar)
+	{
+		Random rnd = new Random();
+		String res = "";
+
+		for (int i=0; i<nbrChar; i++)
+		{
+			res += (char)('a' + rnd.nextInt('z' - 'a'));
+		}
+
+		return res;
 	}
 }

@@ -44,7 +44,7 @@
 				<td>
 		<%if (!isForeignPage)
 		{%>
-						<a href="logout?login=<%=user.getKey() %>" >Logout ( <%= user.getKey() %> )</a>
+					<a href="logout?login=<%=user.getKey() %>" >Logout ( <%= user.getKey() %> )</a>
 		<%} %>
 				</td>
 			</tr>
@@ -71,14 +71,23 @@
 			if (isForeignPage)
 			{
 		%>
-							<%= attributeValue%>
+					<%= attributeValue%>
 
 		<%	}
 			else
 			{
+				if (attributeName.equals("interests"))
+				{
 		%>
-							<a href="#### URL to change the label ####"> <%=attributeValue %> </a>	
+					<a href="<%=IdsLab5CloudServlet.FILE_USER_SAME_INTEREST_HTML%>?login=<%=user.getKey()%>"> <%=attributeValue %> </a>
 		<%
+				}
+				else
+				{
+		%>
+					<a href="####URL_TO_DEFINE####"> <%=attributeValue %> </a>
+		<%
+				}
 			}
 		%>
 					</td>
@@ -110,7 +119,7 @@
 		%>
 		<section class="container">
 			<div align="right">
-				<h1>Can't find the freind "<%= freindLoginError %> "</h1>
+				<h1>Can't find the friend "<%= freindLoginError %> "</h1>
 				<p></p>
 		</section>
 		<%
@@ -118,7 +127,7 @@
 		if (!user.get_freind().isEmpty())
 		{
 		%>
-				<h1> <%= user.getKey()%> 's Freinds:</h1>
+				<h1> <%= user.getKey()%> 's Friends:</h1>
 		<%
 		}
 

@@ -18,11 +18,13 @@ public class ResourceManager_DataStoreService implements ResourceManager
 // -------------------------------
 // Attributes
 // -------------------------------
-	public static final Class<?>	keyUser					= Data_user.class;
-	public static final Class<?>	keyAvailableCity		= Data_city.class;
-	public static final Class<?>	keyAvailableInterest	= Data_interest.class;
+	public static final Class<?>				KEY_USER				= Data_user.class;
+	public static final Class<?>				KEY_AVAILABLE_CITY		= Data_city.class;
+	public static final Class<?>				KEY_AVAILABLE_INTEREST	= Data_interest.class;
+	public static final int						NBR_INITIAL_RANDOM_USER	= 10;
 
-	private static final EntityManagerFactory	entityManagerFactory= Persistence.createEntityManagerFactory("transactions-optional");
+	private static final EntityManagerFactory	entityManagerFactory	= Persistence.createEntityManagerFactory("transactions-optional");
+	private static boolean						isFirstInstance			= false;
 
 	private final Object lock = new Object();
 
@@ -47,6 +49,19 @@ public class ResourceManager_DataStoreService implements ResourceManager
 				EntityManager entityManager = entityManagerFactory.createEntityManager();
 				entityManager.persist(entity);
 				entityManager.close();
+			}
+			if (isFirstInstance)
+			{
+System.out.println("---------------- add all users");
+				isFirstInstance = false;
+				for (Data_user entity: Data_user.getRandomUserList(NBR_INITIAL_RANDOM_USER))
+				{
+					EntityManager entityManager = entityManagerFactory.createEntityManager();
+					entityManager.persist(entity);
+					entityManager.close();
+System.out.println("\t User = " + entity);
+				}
+System.out.println("---------------- add all users");
 			}
 		}
 	}
@@ -218,7 +233,7 @@ public class ResourceManager_DataStoreService implements ResourceManager
 	@Override
 	public Data_user getUser(String login)
 	{
-		return (Data_user) this.getEntity(keyUser, login);
+		return (Data_user) this.getEntity(KEY_USER, login);
 	}
 
 	@Override
@@ -230,13 +245,13 @@ public class ResourceManager_DataStoreService implements ResourceManager
 	@Override
 	public void removeUser (String login)
 	{
-		this.removeEntity(keyUser, login);
+		this.removeEntity(KEY_USER, login);
 	}
 
 	@Override
 	public void setUserIP (String login, String ip)
 	{
-		this.setEntityProperty(keyUser, login, "ip", ip, true);
+		this.setEntityProperty(KEY_USER, login, "ip", ip, true);
 	}
 
 	@Override
@@ -245,13 +260,13 @@ public class ResourceManager_DataStoreService implements ResourceManager
 		Data_user currentUser = getUser(login);
 		if (!currentUser.isFreind(freindLogin))
 		{
-			this.setEntityProperty(keyUser, login, "freind", freindLogin, false);
+			this.setEntityProperty(KEY_USER, login, "freind", freindLogin, false);
 		}
 	}
 
 	@Override
 	public boolean containsUser (String login)
 	{
-		return this.containsEntity(keyUser, login);
+		return this.containsEntity(KEY_USER, login);
 	}
 }

@@ -63,7 +63,7 @@ public class ResourceManager_NonPersistant // TODO extends ResourceManager
 	public void setUserIP(String login, String ip)
 	{
 		Data_user user = this.userSet.get(login);
-		user.set_ip(ip);
+		user.setIP(ip);
 	}
 
 	public void addUserFreind(String login, String freindLogin)

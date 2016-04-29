@@ -50,7 +50,7 @@
 <!--- ----------------------------------------------------------------------------------- -->
 					<label>Location</label>
 					<p></p>
-					<% for (DataInterface city: IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.keyAvailableCity, null))
+					<% for (DataInterface city: IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.KEY_AVAILABLE_CITY, null))
 					{%>
 						<input type="radio" name="location" value="<%=city.getKey()%>" checked> <%=city.getKey()%> <br>
 					<% } %>
@@ -58,7 +58,7 @@
 
 					<label>Interest</label>
 						<p></p>
-					<% for (DataInterface interest: IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.keyAvailableInterest, null))
+					<% for (DataInterface interest: IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.KEY_AVAILABLE_INTEREST, null))
 					{%>
 						<input type="radio" name="interest" value="<%=interest.getKey()%>" checked> <%=interest.getKey()%> <br>
 					<% } %>

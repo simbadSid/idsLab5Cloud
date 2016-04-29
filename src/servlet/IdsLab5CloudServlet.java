@@ -32,6 +32,7 @@ public class IdsLab5CloudServlet extends HttpServlet
 	public static final String	FILE_CREATE_ACCOUNT_HTML			= "createAccount.jsp";
 	public static final String	FILE_CREATE_ACCOUNT_FAIL_HTML		= "createAccount_fail.jsp";
 	public static final String	FILE_USER_PAGE_HTML					= "userPage.jsp";
+	public static final String	FILE_USER_SAME_INTEREST_HTML		= "userSameInterests.jsp";
 
 	public static final String	ATTRIBUTE_NAME_LOGIN				= "login";
 	public static final String	ATTRIBUTE_NAME_PASSWORD				= "password";
@@ -75,12 +76,13 @@ public class IdsLab5CloudServlet extends HttpServlet
 	private void entryMethod(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 //TODO
-System.out.println("+++++++++++++++++++++++++++++++++++++");
-System.out.println(IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.keyAvailableCity, null));
-System.out.println("+++++++++++++++++++++++++++++++++++++");
+//System.out.println("+++++++++++++++++++++++++++++++++++++");
+//System.out.println("User list: ");
+//System.out.println(IdsLab5CloudServlet.userSet.getEntity(ResourceManager_DataStoreService.KEY_USER, null));
+//System.out.println("+++++++++++++++++++++++++++++++++++++");
 		PrintWriter requestWritter = resp.getWriter();
 		String methodName = parseMethodName(req);
-System.out.println("+++++ Method: " + methodName);
+//System.out.println("+++++ Method: " + methodName);
 
 		try
 		{
@@ -140,6 +142,7 @@ System.out.println("+++++ Method: " + methodName);
 		String name					= null;
 		String surname				= null;
 		String location				= null;
+		String ip					= null;
 		String interest				= null;
 		Integer age					= null;
 
@@ -152,9 +155,10 @@ System.out.println("+++++ Method: " + methodName);
 			surname					= req.getParameter(ATTRIBUTE_NAME_SURNAME);
 			age						= Integer.parseInt(req.getParameter(ATTRIBUTE_NAME_AGE));
 			location				= req.getParameter(ATTRIBUTE_NAME_LOCATION);
+			ip						= req.getRemoteHost();
 			interest				= req.getParameter(ATTRIBUTE_NAME_INTEREST);
 			String []interestTab	= interest.split(ATTRIBUTE_SEPARATOR_INTEREST);
-			Data_user user = new Data_user(login, password, name, surname, age, location, interestTab);
+			Data_user user			= new Data_user(login, password, name, surname, age, location, ip, interestTab);
 
 			if (userSet.containsUser(login))
 			{
@@ -164,7 +168,6 @@ System.out.println("+++++ Method: " + methodName);
 			{
 				throw new Exception();
 			}
-			user.set_ip(req.getRemoteHost());
 			userSet.addUser(user);
 			// Redirect to the specific page of the user
 			redirectToUserPage(req, resp, user.getKey(), false, null);
@@ -303,4 +306,5 @@ System.out.println("+++++ Method: " + methodName);
 		parameter.put(ATTRIBUTE_NAME_FREIND_LOGIN_ERROR, freindLoginError);
 		this.redirectToFile(req, resp, FILE_USER_PAGE_HTML, parameter);
 	}
+
 }
